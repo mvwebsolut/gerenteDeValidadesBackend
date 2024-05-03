@@ -1,0 +1,1 @@
+const register_button = $("//[@data-qa='email']");

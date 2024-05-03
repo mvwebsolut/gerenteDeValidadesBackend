@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Produtos</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <link href="static/styles.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+
+<script>
+    function GoToCategory(id){
+        window.location = "/categorys/" + id;
+    }
+
+    function DeleteProduct(id){
+        window.location = "/products/delete/" + id;
+    }
+</script>
+
+
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-1xl font-bold mb-6">Categorias</h1>
+
+    <div class="mb-8 overflow-x-auto whitespace-nowrap">
+        <div class="flex space-x-4">
+            <div class="b-white p-4 rounded-lg shadow-md flex flex-col items-center w-40 category-item" id="add-category-box" style="cursor: pointer;">
+                <div class="w-12 h-12 bg-blue-500 rounded-full flex justify-center items-center text-white font-bold text-lg mb-2">
+                    <span class="add-icon">+</span>
+                </div>
+                <span>Add</span>
+            </div>
+
+            {% for category in categorys %}
+                <div class="bg-white p-4 rounded-lg hover:bg-green-100 shadow-md flex flex-col items-center w-40 category-item" onclick="GoToCategory({{ category.id }})" style="cursor: pointer;">
+                    <div class="w-12 h-12 {{ category.products | get_badger_category_color }} rounded-full flex justify-center items-center text-white font-bold text-lg mb-2">
+                        {{ category.products | length  }}
+                    </div>
+                    <div>{{ category.name | category_name_formater }}</div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <h1 class="text-1xl font-bold mb-6">Próximos de Vencimento</h1>
+
+    <div id="product-list" class="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+
+        <div class="card flex justify-center items-center p-4 rounded-lg bg-white shadow-md cursor-pointer" onclick="addProduct()">
+            <div class="flex flex-col items-center">
+                <span class="text-5xl text-gray-500">+</span>
+                <span class="text-lg font-semibold">Adicionar Produto</span>
+            </div>
+        </div>
+
+        {% for product in products %}
+            <div class="card flex justify-between items-center p-4 rounded-lg bg-white shadow-md">
+                <div class="flex flex-col flex-grow">
+                    <strong>{{ product.name }}</strong>
+                    <span>Categoria: <b>{{ product.categorys | category_name_formater }}</b></span>
+                    <span>Lote: {{ product.lote_number }}</span>
+                    <span>Data de Validade: {{ product.validity_date }}</span>
+                </div>
+                <div class="flex flex-row items-center">
+                    <span class="div p-2 m-2 w-10 text-center rounded-full text-white {{ product.days_until_expiration | get_badger_color }}">{{ product.days_until_expiration }}</span>
+                    <span onclick="DeleteProduct({{ product.id }})" class="delete-icon cursor-pointer">🗑️</span>
+                </div>
+            </div>
+        {% endfor %}
+
+    </div>
+
+</div>
+
+
+<!-- Modal para adicionar produto -->
+<div id="add-product-modal" class="fixed inset-0 z-10 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="sm:flex sm:items-start">
+                    <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 sm:mx-0 sm:h-10 sm:w-10">
+                        <!-- Ícone de adição -->
+                        <svg class="h-6 w-6 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                    </div>
+                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Adicionar Produto</h3>
+                        <div class="mt-2">
+                            <!-- Formulário para adicionar produto -->
+                            <form id="add-product-form" class="space-y-6" method="POST" action="/products/add">
+                                <div class="">
+                                    <label for="product-name" class="block text-sm font-medium text-gray-700">Nome do Produto</label>
+                                    <input type="text" name="product-name" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" type="text" placeholder="Biscoito Recheado..." id="product-name" >
+                                </div>
+
+                                <div class="">
+                                    <label for="product-lote" class="block text-sm font-medium text-gray-700">Lote do Produto</label>
+                                    <input type="text" name="product-lote" id="product-lote" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" type="text" placeholder="LD89S214" >
+                                </div>
+
+                                <div class="">
+                                    <label for="product-validity-date" class="block text-sm font-medium text-gray-700">Data de Validade do Produto</label>
+                                    <input type="date" value="2017-06-01" name="product-validity-date" id="product-validity-date" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500">
+                                </div>
+
+                                <div>
+                                    <label for="product-category" class="block text-sm font-medium text-gray-700">Categoria do Produto</label>
+                                    <input type="text" name="product-category" id="product-category"  class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" type="text" placeholder="Biscoitos" list="categories">
+                                    <datalist id="categories">
+                                        {% for category in categorys %}
+                                            <option value="{{ category.name | category_name_formater }}">
+                                        {% endfor %}
+                                    </datalist>
+                                </div>
+                                <div class="px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                                    <button type="submit" id="add-product-button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">Adicionar</button>
+                                    <button type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm" onclick="closeModal()">Cancelar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<script type="text/javascript">
+
+        // Função para abrir o modal de adicionar produto
+        function openModal() {
+            document.getElementById('add-product-modal').classList.remove('hidden');
+        }
+
+        // Função para fechar o modal de adicionar produto
+        function closeModal() {
+            document.getElementById('add-product-modal').classList.add('hidden');
+        }
+
+        // Função para adicionar produto
+        function addProduct() {
+            openModal();
+
+            document.getElementById('add-product-button').addEventListener('click', function() {
+                closeModal();
+                window.location.reload();
+            });
+        }
+
+    </script>
+<script src="/static/scripts.js"></script>
+
+</body>
+</html>

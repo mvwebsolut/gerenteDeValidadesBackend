@@ -1,0 +1,84 @@
+/* styles.css */
+.card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+
+.category-item{
+    transition: transform 0.2s ease;
+}
+
+.category-item:hover{
+    transform: translateY(-3px);
+}
+
+.card:hover {
+    transform: translateY(-3px);
+}
+
+.badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.delete-icon {
+    cursor: pointer;
+}
+
+/* styles.css */
+/* Ajustes para a seção de categorias */
+.overflow-x-auto {
+    overflow-x: auto;
+}
+
+/* Estilos da barra de rolagem */
+.overflow-x-auto::-webkit-scrollbar {
+    width: 5px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 2.5px; /* metade da largura para tornar mais arredondado */
+}
+
+.overflow-x-auto::-webkit-scrollbar-track {
+    background-color: transparent; /* transparente para uma aparência mais sutil */
+}
+
+.flex.space-x-4 {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* Para rolagem suave no iOS */
+}
+
+#product-list {
+    max-height: 70vh; /* Define a altura máxima em 70% da altura da viewport */
+    overflow-y: auto; /* Habilita o scroll vertical apenas se o conteúdo ultrapassar a altura máxima */
+}
+
+
+/* Estilos do box de adicionar categoria */
+#add-category-box {
+    background-color: #f0f4f8; /* Cor de fundo */
+    border: 1px solid #cbd5e0; /* Borda */
+    border-radius: 0.375rem; /* Borda arredondada */
+    cursor: pointer; /* Cursor ao passar por cima */
+    padding: 1rem; /* Espaçamento interno */
+    transition: background-color 0.2s ease; /* Transição suave ao passar por cima */
+    width: 8rem; /* Largura do box */
+}
+
+#add-category-box:hover {
+    background-color: #e2e8f0; /* Cor de fundo ao passar por cima */
+}
+
+#add-category-box .bg-blue-500 {
+    background-color: #4a90e2; /* Cor de fundo do círculo */
+}
+
+#add-category-box .text-white {
+    color: #fff; /* Cor do texto */
+}
